@@ -13,7 +13,7 @@ class Jugador(pygame.sprite.Sprite):
         self.rect.x = pos[0] #variable de posicionamiento
         self.rect.y = (ALTO-self.rect.height) - 10 #se le suma 10 para que no este pegado al final
         self.velx = 0
-        #self.vely = 0 #se comenta para que el jugador no se mueva en y
+        self.vely = 0 #se comenta para que el jugador no se mueva en y
 
     def RetPos(self):
         x = self.rect.x
@@ -22,7 +22,7 @@ class Jugador(pygame.sprite.Sprite):
 
     def update(self):
         self.rect.x += self.velx
-        #self.rect.y += self.vely
+        self.rect.y += self.vely
 
 
 class Rival(pygame.sprite.Sprite):
@@ -81,6 +81,7 @@ if __name__ == '__main__':
         rivales.add(r)
 
     fin = False
+    ptos = 500
     reloj = pygame.time.Clock()
 
     while not fin:
@@ -120,7 +121,10 @@ if __name__ == '__main__':
             j.rect.x = 0-j.rect.width
 
         #Colision
-
+        ls_col = pygame.sprite.spritecollide(j,rivales,False)
+        for e in ls_col:
+            ptos-=1
+        print (ptos)
 
         #limpieza
         for b in balas:
@@ -137,4 +141,3 @@ if __name__ == '__main__':
         balas.draw(ventana)
         pygame.display.flip() #refresca
         reloj.tick(40) #cuadros por segundo
-        
