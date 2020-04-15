@@ -122,6 +122,7 @@ if __name__ == '__main__':
 
         #Colision
         ls_col = pygame.sprite.spritecollide(j,rivales,True)
+        #colision activa
         for e in ls_col:
             ptos+=1
         print (ptos)
