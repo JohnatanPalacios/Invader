@@ -81,7 +81,7 @@ if __name__ == '__main__':
         rivales.add(r)
 
     fin = False
-    ptos = 500
+    ptos = 0
     reloj = pygame.time.Clock()
 
     while not fin:
@@ -121,9 +121,9 @@ if __name__ == '__main__':
             j.rect.x = 0-j.rect.width
 
         #Colision
-        ls_col = pygame.sprite.spritecollide(j,rivales,False)
+        ls_col = pygame.sprite.spritecollide(j,rivales,True)
         for e in ls_col:
-            ptos-=1
+            ptos+=1
         print (ptos)
 
         #limpieza
