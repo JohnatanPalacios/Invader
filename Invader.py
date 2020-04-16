@@ -7,8 +7,9 @@ class Jugador(pygame.sprite.Sprite):
     def __init__(self,pos): #constructor
         #pass
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.Surface([50,50]) #crea un cuadrado
-        self.image.fill(BLANCO) #lo pinta de blanco
+        self.image = pygame.image.load("nave.png").convert_alpha()
+        #self.image = pygame.Surface([50,50]) #crea un cuadrado
+        #self.image.fill(BLANCO) #lo pinta de blanco
         self.rect = self.image.get_rect() #metodo para limitaciones y colisiones
         self.rect.x = pos[0] #variable de posicionamiento
         self.rect.y = (ALTO-self.rect.height) - 10 #se le suma 10 para que no este pegado al final
@@ -29,8 +30,9 @@ class Rival(pygame.sprite.Sprite):
     def __init__(self,pos): #constructor
         #pass
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.Surface([50,50]) #crea un cuadrado
-        self.image.fill(VERDE) #lo pinta de blanco
+        self.image = pygame.image.load("monster.png").convert_alpha()
+        #self.image = pygame.Surface([50,50]) #crea un cuadrado
+        #self.image.fill(VERDE) #lo pinta de blanco
         self.rect = self.image.get_rect() #metodo para limitaciones y colisiones
         self.rect.x = pos[0] #variable de posicionamiento
         self.rect.y = pos[1] #variable de posicionamiento
@@ -46,11 +48,11 @@ class Bala(pygame.sprite.Sprite):
     def __init__(self,pos): #constructor
         #pass
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.Surface([10,30]) #crea un cuadrado
+        self.image = pygame.Surface([5,15]) #crea un cuadrado
         self.image.fill(AMARILLO) #lo pinta de blanco
         self.rect = self.image.get_rect() #metodo para limitaciones y colisiones
-        self.rect.x = pos[0] #variable de posicionamiento
-        self.rect.y = pos[1] #variable de posicionamiento
+        self.rect.x = pos[0]+35 #variable de posicionamiento
+        self.rect.y = pos[1]+20 #variable de posicionamiento
         self.velx = 0
         self.vely = 0
 
