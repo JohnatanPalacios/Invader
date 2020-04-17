@@ -37,18 +37,25 @@ class Rival(pygame.sprite.Sprite):
         self.rect.y = pos[1] #variable de posicionamiento
         self.velx = 0
         self.vely = 0
+        self.temp = random.randrange(40,220)
+
+    def RetPos(self):
+        x = self.rect.x + 5
+        y = self.rect.bottom + 5
+        return [x,y]
 
     def update(self):
+        self.temp -= 1
         #self.rect.x += self.velx
         #self.rect.y += self.vely
-        pass
+        # se usa para dejar la función a la espera de instrucciones pass
 
 class Bala(pygame.sprite.Sprite):
-    def __init__(self,pos): #constructor
+    def __init__(self,pos, cl=AMARILLO): #constructor
         #pass
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.Surface([5,15]) #crea un cuadrado
-        self.image.fill(AMARILLO) #lo pinta de blanco
+        self.image.fill(cl) #lo pinta de blanco
         self.rect = self.image.get_rect() #metodo para limitaciones y colisiones
         self.rect.x = pos[0]+35 #variable de posicionamiento
         self.rect.y = pos[1]+20 #variable de posicionamiento
@@ -58,16 +65,15 @@ class Bala(pygame.sprite.Sprite):
     def update(self):
         self.rect.y += self.vely
 
-
-
 if __name__ == '__main__':
-    pygame.init()
+    pygame.init() #crea la ventana e inicializa todo
     #Definicion de variables
     ventana = pygame.display.set_mode([ANCHO, ALTO])
 
     jugadores = pygame.sprite.Group()
     rivales = pygame.sprite.Group()
     balas = pygame.sprite.Group()
+    balas_r = pygame.sprite.Group()
 
     j = Jugador([300,200])
     jugadores.add(j)
@@ -124,6 +130,7 @@ if __name__ == '__main__':
 
         #Colision
         ls_col = pygame.sprite.spritecollide(j,rivales,True)
+
         #colision activa
         for e in ls_col:
             ptos+=1
@@ -137,19 +144,37 @@ if __name__ == '__main__':
                 balas.remove(b)
             print(ptos)'''
 
-        #limpieza
+        #Control de rivales
+        for r in rivales:
+            if r.temp < 0:
+                print('Disparo')
+                pos = r.RetPos()
+                b = Bala(pos,VERDE)
+                b.vely = 10
+                balas_r.add(b)
+                r.temp = random.randrange(40,220)
+
+        #limpieza de memoria
         for b in balas:
             ls_r = pygame.sprite.spritecollide(b,rivales,True)
             if b.rect.y < -30:
                 balas.remove(b)
 
+        for b in balas_r:
+            if b.rect.y > ALTO:
+                balas_r.remove(b)
+
         # Refresco de pantalla
         jugadores.update() #actualiza los objetos o sprites
         rivales.update()
         balas.update()
+        balas_r.update()
+
         ventana.fill(NEGRO) #borra
+
         jugadores.draw(ventana) #dibuja
         rivales.draw(ventana)
         balas.draw(ventana)
+        balas_r.draw(ventana)
         pygame.display.flip() #refresca
         reloj.tick(40) #cuadros por segundo
