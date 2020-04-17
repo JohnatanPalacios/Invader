@@ -35,7 +35,7 @@ class Rival(pygame.sprite.Sprite):
         self.rect = self.image.get_rect() #metodo para limitaciones y colisiones
         self.rect.x = pos[0] #variable de posicionamiento
         self.rect.y = pos[1] #variable de posicionamiento
-        self.velx = 0
+        self.velx = 5
         self.vely = 0
         self.temp = random.randrange(40,220)
 
@@ -46,9 +46,14 @@ class Rival(pygame.sprite.Sprite):
 
     def update(self):
         self.temp -= 1
-        #self.rect.x += self.velx
+        self.rect.x += self.velx
+        if self.rect.x > (ANCHO - self.rect.width):
+            self.rect.x = ANCHO - self.rect.width
+            self.velx = -5
+        elif self.rect.x < 0:
+            self.rect.x = 0
+            self.velx = 5
         #self.rect.y += self.vely
-        # se usa para dejar la función a la espera de instrucciones pass
 
 class Bala(pygame.sprite.Sprite):
     def __init__(self,pos, cl=AMARILLO): #constructor
@@ -83,9 +88,9 @@ if __name__ == '__main__':
     for i in range(n):
         x = random.randrange(ANCHO)
         y = random.randrange(ALTO-180)
-        vx = random.randrange(10)
+        #vx = random.randrange(10)
         r=Rival([x,y])
-        r.velx=vx
+        #r.velx=vx
         rivales.add(r)
 
     fin = False
@@ -158,6 +163,8 @@ if __name__ == '__main__':
         for b in balas:
             ls_r = pygame.sprite.spritecollide(b,rivales,True)
             if b.rect.y < -30:
+                balas.remove(b)
+            for r in ls_r:
                 balas.remove(b)
 
         for b in balas_r:
