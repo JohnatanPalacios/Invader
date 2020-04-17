@@ -15,6 +15,7 @@ class Jugador(pygame.sprite.Sprite):
         self.rect.y = (ALTO-self.rect.height) - 10 #se le suma 10 para que no este pegado al final
         self.velx = 0
         self.vely = 0 #se comenta para que el jugador no se mueva en y
+        self.vida = 0
 
     def RetPos(self):
         x = self.rect.x
@@ -94,6 +95,7 @@ if __name__ == '__main__':
         rivales.add(r)
 
     fin = False
+    fin_juego = False
     ptos = 0
     reloj = pygame.time.Clock()
 
@@ -168,20 +170,34 @@ if __name__ == '__main__':
                 balas.remove(b)
 
         for b in balas_r:
+            ls_j = pygame.sprite.spritecollide(b,jugadores,False)
             if b.rect.y > ALTO:
                 balas_r.remove(b)
+            for j in ls_j:
+                j.vida -= 1
+
+        for j in jugadores:
+            if j.vida < 0:
+                fin_juego = True
 
         # Refresco de pantalla
-        jugadores.update() #actualiza los objetos o sprites
-        rivales.update()
-        balas.update()
-        balas_r.update()
+        if not fin_juego:
+            jugadores.update() #actualiza los objetos o sprites
+            rivales.update()
+            balas.update()
+            balas_r.update()
 
-        ventana.fill(NEGRO) #borra
+            ventana.fill(NEGRO) #borra
 
-        jugadores.draw(ventana) #dibuja
-        rivales.draw(ventana)
-        balas.draw(ventana)
-        balas_r.draw(ventana)
-        pygame.display.flip() #refresca
-        reloj.tick(40) #cuadros por segundo
+            jugadores.draw(ventana) #dibuja
+            rivales.draw(ventana)
+            balas.draw(ventana)
+            balas_r.draw(ventana)
+            pygame.display.flip() #refresca
+            reloj.tick(40) #cuadros por segundo
+        else:
+            fuente = pygame.font.Font(None,50)
+            msj = fuente.render('Fin de Juego', True, BLANCO)
+            ventana.fill(NEGRO)
+            ventana.blit(msj,[300,350])
+            pygame.display.flip()
