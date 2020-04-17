@@ -31,8 +31,7 @@ class Rival(pygame.sprite.Sprite):
         #pass
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.image.load("monster.png").convert_alpha()
-        #self.image = pygame.Surface([50,50]) #crea un cuadrado
-        #self.image.fill(VERDE) #lo pinta de blanco
+        #convert_alpha reduce la colusion solo a la parte con alpha
         self.rect = self.image.get_rect() #metodo para limitaciones y colisiones
         self.rect.x = pos[0] #variable de posicionamiento
         self.rect.y = pos[1] #variable de posicionamiento
@@ -73,6 +72,7 @@ if __name__ == '__main__':
     j = Jugador([300,200])
     jugadores.add(j)
 
+    #creación de enemigos
     n=10
     for i in range(n):
         x = random.randrange(ANCHO)
@@ -129,8 +129,17 @@ if __name__ == '__main__':
             ptos+=1
         print (ptos)
 
+        #colision balas
+        '''for b in balas:
+            ls_r = pygame.sprite.spritecollide(b,rivales,true)
+            for e in ls_colision:
+                ptos+=1
+                balas.remove(b)
+            print(ptos)'''
+
         #limpieza
         for b in balas:
+            ls_r = pygame.sprite.spritecollide(b,rivales,True)
             if b.rect.y < -30:
                 balas.remove(b)
 
