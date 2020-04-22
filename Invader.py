@@ -15,7 +15,7 @@ class Jugador(pygame.sprite.Sprite):
         self.rect.y = (ALTO-self.rect.height) - 10 #se le suma 10 para que no este pegado al final
         self.velx = 0
         self.vely = 0 #se comenta para que el jugador no se mueva en y
-        self.vida = 0
+        self.vida = 2
 
     def RetPos(self):
         x = self.rect.x
@@ -25,7 +25,6 @@ class Jugador(pygame.sprite.Sprite):
     def update(self):
         self.rect.x += self.velx
         self.rect.y += self.vely
-
 
 class Rival(pygame.sprite.Sprite):
     def __init__(self,pos): #constructor
@@ -76,10 +75,36 @@ if __name__ == '__main__':
     #Definicion de variables
     ventana = pygame.display.set_mode([ANCHO, ALTO])
 
+    #Seccion antes del juego
+    msc = pygame.mixer.Sound('Battleship.ogg')
+    fuente_prev = pygame.font.Font(None,46)
+    txt_titulo = fuente_prev.render('JUEGO EJEMPLO',True,BLANCO)
+    msc.play(-1)
+    fin = False
+    fin_prev = False
+    while (not fin) and (not fin_prev):
+        #Gestion eventos
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                fin = True
+            if event.type == pygame.KEYDOWN:
+                fin_prev = True
+
+        ventana.blit(txt_titulo,[350,300])
+        pygame.display.flip()
+    msc.stop()
+
+
+
+    #Seccion del juego
+    #Definicion de variables
     jugadores = pygame.sprite.Group()
     rivales = pygame.sprite.Group()
     balas = pygame.sprite.Group()
     balas_r = pygame.sprite.Group()
+
+    fuente_j = pygame.font.Font(None,32)
+    shoot = pygame.mixer.Sound('shoot.wav')
 
     j = Jugador([300,200])
     jugadores.add(j)
@@ -94,16 +119,16 @@ if __name__ == '__main__':
         #r.velx=vx
         rivales.add(r)
 
-    fin = False
-    fin_juego = False
-    ptos = 0
     reloj = pygame.time.Clock()
+    fin_juego = False
+    #fin = False
+    ptos = 0
 
-    while not fin:
-        # Gestion de eventos (raton, teclado, etc)
+    while (not fin) and (not fin_juego):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 fin = True
+            # Gestion de eventos (raton, teclado, etc)
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RIGHT:
                     j.velx = 5
@@ -119,6 +144,7 @@ if __name__ == '__main__':
                     j.velx = 0
             if event.type == pygame.MOUSEBUTTONDOWN:
                 #pos jugador
+                shoot.play()
                 p = j.RetPos()
                 b = Bala(p)
                 b.vely = -10
@@ -171,33 +197,52 @@ if __name__ == '__main__':
 
         for b in balas_r:
             ls_j = pygame.sprite.spritecollide(b,jugadores,False)
+            #se elimina bala si sale de ventana
             if b.rect.y > ALTO:
                 balas_r.remove(b)
+
+            contacto = True
             for j in ls_j:
-                j.vida -= 1
+                if contacto:
+                    j.vida -= 1
+                    balas_r.remove(b) #elimina bala si hay contacto
+                    contacto = False
 
         for j in jugadores:
             if j.vida < 0:
                 fin_juego = True
 
         # Refresco de pantalla
-        if not fin_juego:
-            jugadores.update() #actualiza los objetos o sprites
-            rivales.update()
-            balas.update()
-            balas_r.update()
+        msj = 'Vidas: ' + str(j.vida)
+        info = fuente_j.render(msj,True,BLANCO)
 
-            ventana.fill(NEGRO) #borra
+        jugadores.update() #actualiza los objetos o sprites
+        rivales.update()
+        balas.update()
+        balas_r.update()
 
-            jugadores.draw(ventana) #dibuja
-            rivales.draw(ventana)
-            balas.draw(ventana)
-            balas_r.draw(ventana)
-            pygame.display.flip() #refresca
-            reloj.tick(40) #cuadros por segundo
-        else:
-            fuente = pygame.font.Font(None,50)
-            msj = fuente.render('Fin de Juego', True, BLANCO)
-            ventana.fill(NEGRO)
-            ventana.blit(msj,[300,350])
-            pygame.display.flip()
+        ventana.fill(NEGRO) #borra
+        ventana.blit(info,[10,10])
+
+        jugadores.draw(ventana) #dibuja
+        rivales.draw(ventana)
+        balas.draw(ventana)
+        balas_r.draw(ventana)
+        pygame.display.flip() #refresca
+        reloj.tick(40) #cuadros por segundo
+
+    #Despues del juego
+    while not fin:
+        #Gestion de eventos
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                fin = True
+
+        gameOver = pygame.image.load("GameOver.png").convert()
+        ventana.blit(gameOver, (0, 0))
+
+        #fuente = pygame.font.Font(None,50)
+        #msj = fuente.render('Fin de Juego', True, BLANCO)
+        #ventana.fill(NEGRO)
+        #ventana.blit(msj,[300,350])
+        pygame.display.flip()
